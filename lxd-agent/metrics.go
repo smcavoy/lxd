@@ -54,7 +54,7 @@ func metricsGet(d *Daemon, r *http.Request) response.Response {
 		out.Memory = memStats
 	}
 
-	netStats, err := getNetworkMetrics()
+	netStats, err := getNetworkMetrics(d)
 	if err != nil {
 		logger.Warn("Failed to get network metrics", logger.Ctx{"err": err})
 	} else {
@@ -384,10 +384,10 @@ func getMemoryMetrics() (metrics.MemoryMetrics, error) {
 	return out, nil
 }
 
-func getNetworkMetrics() (map[string]metrics.NetworkMetrics, error) {
+func getNetworkMetrics(d *Daemon) (map[string]metrics.NetworkMetrics, error) {
 	out := map[string]metrics.NetworkMetrics{}
 
-	for dev, state := range networkState() {
+	for dev, state := range networkState(d) {
 		stats := metrics.NetworkMetrics{}
 
 		stats.ReceiveBytes = uint64(state.Counters.BytesReceived)

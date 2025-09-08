@@ -134,7 +134,7 @@ func (c *cmdAgent) Run(cmd *cobra.Command, args []string) error {
 	// Mount shares from host.
 	c.mountHostShares()
 
-	d := newDaemon(c.global.flagLogDebug, c.global.flagLogVerbose)
+	d := newDaemon(c.global.flagLogDebug, c.global.flagLogVerbose, c.global.flagExcludeInterfaces)
 
 	// Start the server.
 	err = startHTTPServer(d)

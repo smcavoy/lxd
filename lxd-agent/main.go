@@ -14,6 +14,8 @@ type cmdGlobal struct {
 
 	flagLogVerbose bool
 	flagLogDebug   bool
+
+	flagExcludeInterfaces string
 }
 
 func main() {
@@ -33,6 +35,7 @@ func main() {
 	app.PersistentFlags().BoolVarP(&globalCmd.flagHelp, "help", "h", false, "Print help")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogVerbose, "verbose", "v", false, "Show all information messages")
 	app.PersistentFlags().BoolVarP(&globalCmd.flagLogDebug, "debug", "d", false, "Show all debug messages")
+	app.PersistentFlags().StringVar(&globalCmd.flagExcludeInterfaces, "exclude-interfaces", "", "Comma-separated list of network interfaces to exclude from stats/state queries")
 
 	// Version handling
 	app.SetVersionTemplate("{{.Version}}\n")

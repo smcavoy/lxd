@@ -25,18 +25,18 @@ var stateCmd = APIEndpoint{
 }
 
 func stateGet(d *Daemon, r *http.Request) response.Response {
-	return response.SyncResponse(true, renderState())
+	return response.SyncResponse(true, renderState(d))
 }
 
 func statePut(d *Daemon, r *http.Request) response.Response {
 	return response.NotImplemented(nil)
 }
 
-func renderState() *api.InstanceState {
+func renderState(d *Daemon) *api.InstanceState {
 	return &api.InstanceState{
 		CPU:       cpuState(),
 		Memory:    memoryState(),
-		Network:   networkState(),
+		Network:   networkState(d),
 		Pid:       1,
 		Processes: processesState(),
 	}
@@ -126,7 +126,7 @@ func memoryState() api.InstanceStateMemory {
 	return memory
 }
 
-func networkState() map[string]api.InstanceStateNetwork {
+func networkState(d *Daemon) map[string]api.InstanceStateNetwork {
 	result := map[string]api.InstanceStateNetwork{}
 
 	ifs, err := net.Interfaces()
@@ -136,6 +136,11 @@ func networkState() map[string]api.InstanceStateNetwork {
 	}
 
 	for _, iface := range ifs {
+		// Skip interfaces that are in the exclusion list
+		if d != nil && d.excludedInterfaces[iface.Name] {
+			continue
+		}
+
 		network := api.InstanceStateNetwork{
 			Addresses: []api.InstanceStateNetworkAddress{},
 			Counters:  api.InstanceStateNetworkCounters{},
